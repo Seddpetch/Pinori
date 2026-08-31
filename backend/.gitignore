@@ -1,0 +1,9 @@
+.env
+node_modules/
+
+
+# Pinori backend secrets/dependencies
+backend/.env
+backend/node_modules/
+node_modules/
+android/build/
