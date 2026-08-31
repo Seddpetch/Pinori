@@ -15,6 +15,7 @@ import 'dart:convert';
 import 'package:flutter_map/flutter_map.dart';
 import 'dart:async';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import '../../services/onboarding_storage_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -216,7 +217,10 @@ class _MapScreenState extends State<MapScreen> {
         .length;
 
     if (busiestCount >= 3) {
-      return 'Girl… you’ve got $busiestCount places around $busiestNeighbourhood 👀 That could definitely be its own little day.';
+      final greeting = OnboardingStorageService.getPreferredGreeting();
+
+      return '$greeting… you’ve got $busiestCount places around '
+          '$busiestNeighbourhood 👀 That could definitely be its own little day.';
     }
 
     if (cafeCount >= 3) {
@@ -243,9 +247,9 @@ class _MapScreenState extends State<MapScreen> {
 
     try {
       final suggestion = await AiService.getHeyGirlSuggestion(
-        tripName: selectedTrip!.name,
-        destination: selectedTrip!.destination,
         localInsight: localInsight,
+        destination: selectedTrip?.destination ?? '',
+        tripName: selectedTrip?.name ?? '',
         places: places.map((place) {
           return {
             'name': place.name,
@@ -254,6 +258,7 @@ class _MapScreenState extends State<MapScreen> {
             'visited': place.visited,
           };
         }).toList(),
+        preferredGreeting: OnboardingStorageService.getPreferredGreeting(),
       );
 
       if (!mounted) return;
@@ -1984,7 +1989,7 @@ do not guess.
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://localhost:3000/extract-place-image'),
+      Uri.parse('https://pinori-backend.onrender.com/extract-place-image'),
     );
 
     request.files.add(
@@ -2517,8 +2522,8 @@ do not guess.
           '${place.category}|'
           '${place.neighbourhood}|'
           '${place.latitude.toStringAsFixed(5)}|'
-          '${place.longitude.toStringAsFixed(5)}';
-      '${place.visited}';
+          '${place.longitude.toStringAsFixed(5)}'
+          '${place.visited}';
     }).toList()..sort();
 
     final newSignature = signatureParts.join('||');
@@ -2773,9 +2778,10 @@ do not guess.
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const Text(
-                                                'HEY GIRL',
-                                                style: TextStyle(
+                                              Text(
+                                                OnboardingStorageService.getPreferredGreeting()
+                                                    .toUpperCase(),
+                                                style: const TextStyle(
                                                   color: PinoriColours
                                                       .richMahogany,
                                                   fontSize: 22,

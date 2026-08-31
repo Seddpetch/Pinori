@@ -15,6 +15,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool showWelcome = false;
   int onboardingPage = 0;
 
+  String selectedGreeting = 'Hey you';
+  bool showCustomGreeting = false;
+  final TextEditingController greetingController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +32,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    greetingController.dispose();
+    super.dispose();
+  }
+
   Future<void> _finishOnboarding() async {
     await OnboardingStorageService.completeOnboarding();
 
@@ -35,6 +45,182 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const MapScreen()),
+    );
+  }
+
+  Widget _buildGreetingPage() {
+    Widget greetingOption(String label) {
+      final isSelected = !showCustomGreeting && selectedGreeting == label;
+
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedGreeting = label;
+            showCustomGreeting = false;
+          });
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(0xFFC33132)
+                : const Color(0xFFFFFBE9),
+            border: Border.all(color: const Color(0xFF280000), width: 4),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? const Color(0xFFFFFBE9)
+                  : const Color(0xFF280000),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'How should Pinori greet you?',
+            style: TextStyle(
+              color: Color(0xFF280000),
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          const Text(
+            'Pick whatever feels like you ♡',
+            style: TextStyle(
+              color: Color(0xFF280000),
+              fontSize: 15,
+              height: 1.4,
+            ),
+          ),
+
+          const SizedBox(height: 28),
+
+          greetingOption('Hey girl'),
+          const SizedBox(height: 10),
+
+          greetingOption('Hey guy'),
+          const SizedBox(height: 10),
+
+          greetingOption('Hey you'),
+          const SizedBox(height: 10),
+
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showCustomGreeting = true;
+              });
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: showCustomGreeting
+                    ? const Color(0xFFC33132)
+                    : const Color(0xFFFFFBE9),
+                border: Border.all(color: const Color(0xFF280000), width: 4),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Text(
+                'Something else…',
+                style: TextStyle(
+                  color: showCustomGreeting
+                      ? const Color(0xFFFFFBE9)
+                      : const Color(0xFF280000),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          if (showCustomGreeting) ...[
+            const SizedBox(height: 14),
+
+            TextField(
+              controller: greetingController,
+              decoration: InputDecoration(
+                labelText: 'Type your greeting',
+                hintText: 'e.g. Hey babe, Hey bestie, Oi loser, Captain 👀',
+                filled: true,
+                fillColor: const Color(0xFFFFFBE9),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0xFF280000),
+                    width: 4,
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Color(0xFFC33132),
+                    width: 4,
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 28),
+
+          GestureDetector(
+            onTap: () async {
+              final greeting = showCustomGreeting
+                  ? greetingController.text.trim()
+                  : selectedGreeting;
+
+              if (greeting.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Type your greeting first ♡')),
+                );
+                return;
+              }
+
+              await OnboardingStorageService.setPreferredGreeting(greeting);
+
+              if (!mounted) return;
+
+              setState(() {
+                onboardingPage = 2;
+              });
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFC33132),
+                border: Border.all(color: const Color(0xFF280000), width: 4),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'Continue →',
+                style: TextStyle(
+                  color: Color(0xFFFFFBE9),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -49,6 +235,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ? _buildSplash()
               : onboardingPage == 0
               ? _buildWelcome()
+              : onboardingPage == 1
+              ? _buildGreetingPage()
               : _buildHowItWorks(),
         ),
       ),

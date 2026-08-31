@@ -101,6 +101,9 @@ class PinoriMap extends StatelessWidget {
     return FlutterMap(
       mapController: mapController,
       options: MapOptions(
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+        ),
         initialCenter: const LatLng(37.5665, 126.9780),
         initialZoom: 12.5,
         onTap: (_, point) {

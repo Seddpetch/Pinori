@@ -103,7 +103,7 @@ class GeocodingService {
       debugPrint('Trying Kakao geocode: $name | $address');
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/geocode-korea'),
+        Uri.parse('https://pinori-backend.onrender.com/geocode-korea'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'name': name, 'address': address}),
       );

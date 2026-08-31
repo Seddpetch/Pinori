@@ -7,7 +7,7 @@ import '../models/extracted_place.dart';
 class AiService {
   static Future<ExtractedPlace> extractPlaceFromText(String input) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/extract-place'),
+      Uri.parse('https://pinori-backend.onrender.com/extract-place'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'input': input}),
     );
@@ -35,15 +35,17 @@ class AiService {
     required String destination,
     required String localInsight,
     required List<Map<String, dynamic>> places,
+    required String preferredGreeting,
   }) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/hey-girl'),
+      Uri.parse('https://pinori-backend.onrender.com/hey-girl'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'tripName': tripName,
         'destination': destination,
         'localInsight': localInsight,
         'places': places,
+        'preferredGreeting': preferredGreeting,
       }),
     );
 
