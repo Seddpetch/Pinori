@@ -321,31 +321,50 @@ class _MapScreenState extends State<MapScreen> {
 
     final newName = cleanName(name);
 
+    if (newName.isEmpty) {
+      return null;
+    }
+
     final distance = Distance();
 
     for (final place in places) {
       final existingName = cleanName(place.name);
+
+      if (existingName.isEmpty) {
+        continue;
+      }
 
       final metres = distance(
         LatLng(latitude, longitude),
         LatLng(place.latitude, place.longitude),
       );
 
-      final exactSameName =
-          newName.isNotEmpty &&
-          existingName.isNotEmpty &&
-          newName == existingName;
-
-      final veryCloseLocation = metres <= 60;
+      final exactSameName = newName == existingName;
 
       final similarName =
           newName.length >= 4 &&
           existingName.length >= 4 &&
           (newName.contains(existingName) || existingName.contains(newName));
 
-      final similarNameAndNearby = similarName && metres <= 500;
+      // A matching name still needs to be geographically close.
+      //
+      // This avoids:
+      // - different nearby businesses being treated as duplicates
+      // - different branches of the same chain being treated as duplicates
+      final exactNameAndNearby = exactSameName && metres <= 150;
 
-      if (exactSameName || veryCloseLocation || similarNameAndNearby) {
+      final similarNameAndVeryNearby = similarName && metres <= 100;
+
+      debugPrint(
+        'DUPLICATE CHECK: '
+        'new="$name" | '
+        'existing="${place.name}" | '
+        'distance=${metres.toStringAsFixed(1)}m | '
+        'exactName=$exactSameName | '
+        'similarName=$similarName',
+      );
+
+      if (exactNameAndNearby || similarNameAndVeryNearby) {
         return place;
       }
     }
