@@ -34,12 +34,8 @@ We're constantly working on making Pinori even better!
 - 🧭 **Smart Place Grouping:** Automatically group nearby locations to make trip planning easier.
 - 📅 **Day-by-Day Planning:** Organise trips into individual days.
 - 🎨 **Custom Map Themes:** Personalise your map with different visual styles.
-- 🖼️ **Custom Trip Covers:** Give every adventure its own look and personality.
 - 📤 **Exportable Itineraries:** Export your travel plans and saved places.
-- 🤝 **Collaborative Maps:** Plan adventures and share collections with other people.
-- 🌍 **Creator-Curated Maps:** Discover collections and recommendations from other travellers.
 - 🔗 **Improved Social Imports:** Make importing saved places from social platforms even easier.
-- 🌐 **Web Experience:** Access your saved places and trips beyond the mobile app.
 
 ---
 
