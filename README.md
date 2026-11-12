@@ -36,6 +36,10 @@ We're constantly working on making Pinori even better!
 - 🎨 **Custom Map Themes:** Personalise your map with different visual styles.
 - 📤 **Exportable Itineraries:** Export your travel plans and saved places.
 - 🔗 **Improved Social Imports:** Make importing saved places from social platforms even easier.
+- 📸 **Trip Recaps & Memories:** Turn completed trips into beautiful visual recaps, bringing together visited places, photos, dates and memorable moments. Relive your adventures through a personalised travel journal.
+- 📊 **Travel Statistics:** See your travel history at a glance, including places visited, trips completed, destinations explored and personal travel milestones.
+- 🗺️ **Journey Timeline:** Look back at your adventures through a chronological timeline of the places you've explored.
+- 🎞️ **Shareable Trip Stories:** Create and share beautiful summaries of your trips with friends and family.
 
 ---
 
